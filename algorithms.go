@@ -309,20 +309,15 @@ func (src RasterBand) ContourGenerate(
 		fixedLevels_p = (*C.double)(unsafe.Pointer(&fixedLevels[0]))
 	}
 
-	return CPLErr(C.GDALContourGenerate(
+	cErr := C.GDALContourGenerate(
 		src.cval,
 		C.double(interval),
 		C.double(base),
-		C.int(len(fixedLevels)),
-		fixedLevels_p,
-		C.int(useNoDataValue),
-		C.double(noDataValue),
-		unsafe.Pointer(layer.cval),
-		C.int(idFieldIndex),
 		C.int(elevationFieldIndex),
 		C.goGDALProgressFuncProxyB(),
 		unsafe.Pointer(arg),
-	)).Err()
+	)
+	return CPLErrContainer{ErrVal: cErr}.Err()
 }
 
 /* --------------------------------------------- */
